@@ -1,4 +1,5 @@
 from django.shortcuts import render,redirect
+from django.core.paginator import Paginator
 from .models import Board
 from django.http import Http404
 from .forms import BoardForm
@@ -37,6 +38,10 @@ def board_write(request):
     return render(request, "board_write.html", {"form":form})
 
 def board_list(request):
-    boards = Board.objects.all().order_by('-id')
+    all_boards = Board.objects.all().order_by('-id')
+    page = request.GET.get('p', 1)
+    paginator = Paginator(all_boards, 2)
+
+    boards = paginator.get_page(page)
 
     return render(request, "board_list.html", {'boards':boards})
